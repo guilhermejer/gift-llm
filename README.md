@@ -2,14 +2,6 @@
 
 API em FastAPI para orquestrar agentes de perfil e sugestao de presentes/passeios usando LangChain + OpenAI.
 
-## Principios adotados
-- Sem over-engineering
-- Sem acesso direto a banco (dados sempre via backend dedicado)
-- Sem Pydantic para payloads (validacao manual)
-- Modelo configuravel por ambiente (default: `gpt-5.4-nano`)
-- Short-term-memory do profile agent persistida em Postgres usando `friend_id` como `session_id`
-- Short-term-memory do suggestion agent persistida em Postgres usando `gift_id` como `session_id`
-
 ## Estrutura atual
 - `app/main.py`: inicializacao da API e health check
 - `app/api/`: rotas de perfil, eventos e sugestoes
@@ -28,12 +20,6 @@ API em FastAPI para orquestrar agentes de perfil e sugestao de presentes/passeio
 - `APP_HOST` (opcional, default: `0.0.0.0`)
 - `APP_PORT` (opcional, default: `8000`)
 - `MAX_RESPONSE_LOG_CHARS` (opcional, default: `8000`; limite de caracteres do payload de resposta logado)
-
-## Logs HTTP padronizados
-- Cada request recebe `request_id` e retorna header `x-request-id`
-- Logs emitidos em duas etapas: `request started` e `request completed`
-- Formato alinhado ao backend Go: prefixo `YYYY/MM/DD HH:MM:SS` + JSON estruturado
-- Campos principais: `method`, `path`, `status`, `latency_ms`, `response_bytes`, `payload`
 
 ## Instalar dependencias
 ```bash
