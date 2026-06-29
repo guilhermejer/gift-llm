@@ -60,6 +60,7 @@ class ProfileAgentService:
 
         likes = extracted.get("likes", []) or []
         dislikes = extracted.get("dislikes", []) or []
+        personality = extracted.get("personality", []) or []
 
         if not likes:
             likes = ["desconhecido"]
@@ -70,6 +71,7 @@ class ProfileAgentService:
             "friend_id": state.friend_id,
             "likes": likes,
             "dislikes": dislikes,
+            "personality": personality,
             "name": extracted.get("name", ""),
             "city": extracted.get("city", ""),
             "user_relation": extracted.get("user_relation", ""),
@@ -81,6 +83,7 @@ class ProfileAgentService:
                 "friend_id": state.friend_id,
                 "likes": likes,
                 "dislikes": dislikes,
+                "personality": personality,
             }
         )
 
@@ -114,7 +117,8 @@ class ProfileAgentService:
         system_prompt = (
             "Extraia um resumo estruturado de perfil a partir da conversa. "
             "Retorne APENAS JSON valido, sem markdown, no formato: "
-            '{"friend_id":"...","likes":["..."],"dislikes":["..."],"name":"...","city":"...","user_relation":"..."}. '
+            '{"friend_id":"...","likes":["..."],"dislikes":["..."],"personality":["..."],"name":"...","city":"...","user_relation":"..."}. '
+            "O campo personality deve conter tracos de personalidade observados (ex: introvertido, aventureiro, pratico). "
             "Se algo nao estiver claro, use string vazia ou lista vazia."
         )
 
@@ -138,13 +142,16 @@ class ProfileAgentService:
 
         likes_raw = data.get("likes")
         dislikes_raw = data.get("dislikes")
+        personality_raw = data.get("personality")
         likes = likes_raw if isinstance(likes_raw, list) else []
         dislikes = dislikes_raw if isinstance(dislikes_raw, list) else []
+        personality = personality_raw if isinstance(personality_raw, list) else []
 
         return {
             "friend_id": friend_id,
             "likes": [str(item).strip() for item in likes if str(item).strip()],
             "dislikes": [str(item).strip() for item in dislikes if str(item).strip()],
+            "personality": [str(item).strip() for item in personality if str(item).strip()],
             "name": str(data.get("name", "")).strip(),
             "city": str(data.get("city", "")).strip(),
             "user_relation": str(data.get("user_relation", "")).strip(),

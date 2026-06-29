@@ -243,10 +243,15 @@ class SuggestionAgentService:
             details.append(f"data_nascimento={birth_date}")
         if relation:
             details.append(f"relacao={relation}")
+        personality = _read_value(profile_payload, "personality", "Personality")
         if isinstance(likes, list) and likes:
             details.append("likes=" + ", ".join(str(item).strip() for item in likes if str(item).strip()))
         if isinstance(dislikes, list) and dislikes:
             details.append("dislikes=" + ", ".join(str(item).strip() for item in dislikes if str(item).strip()))
+        if isinstance(personality, list) and personality:
+            details.append("personalidade=" + ", ".join(str(item).strip() for item in personality if str(item).strip()))
+        elif isinstance(personality, str) and personality:
+            details.append(f"personalidade={personality}")
         if "embedding" in profile_payload or "Embedding" in profile_payload:
             details.append("embedding_de_profile_persistido=disponivel")
 
