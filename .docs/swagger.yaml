@@ -1,0 +1,699 @@
+basePath: /
+definitions:
+  domain.Friend:
+    properties:
+      birthDate:
+        type: string
+      city:
+        type: string
+      friendID:
+        type: string
+      gender:
+        $ref: '#/definitions/domain.Gender'
+      name:
+        type: string
+      profile:
+        $ref: '#/definitions/domain.Profile'
+      userID:
+        type: string
+      userRelation:
+        type: string
+    type: object
+  domain.Gender:
+    enum:
+    - male
+    - female
+    - other
+    type: string
+    x-enum-varnames:
+    - GenderMale
+    - GenderFemale
+    - GenderOther
+  domain.Gift:
+    properties:
+      description:
+        type: string
+      friendID:
+        type: string
+      giftID:
+        type: string
+      priceRange:
+        type: string
+      tags:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+    type: object
+  domain.Profile:
+    properties:
+      dislikes:
+        items:
+          type: string
+        type: array
+      embedding:
+        items:
+          type: number
+        type: array
+      friendID:
+        type: string
+      likes:
+        items:
+          type: string
+        type: array
+    type: object
+  domain.Reminder:
+    properties:
+      friendID:
+        type: string
+      message:
+        type: string
+      reminderID:
+        type: string
+      triggerAt:
+        type: string
+      type:
+        $ref: '#/definitions/domain.ReminderType'
+      userID:
+        type: string
+    type: object
+  domain.ReminderType:
+    enum:
+    - birthday
+    - custom
+    type: string
+    x-enum-varnames:
+    - ReminderTypeBirthday
+    - ReminderTypeCustom
+  domain.User:
+    properties:
+      active:
+        type: boolean
+      birthDate:
+        type: string
+      city:
+        type: string
+      email:
+        type: string
+      fullName:
+        type: string
+      planID:
+        type: string
+      userID:
+        type: string
+    type: object
+  http.FriendUpsertRequest:
+    properties:
+      birthDate:
+        type: string
+      city:
+        type: string
+      gender:
+        type: string
+      name:
+        type: string
+      userRelation:
+        type: string
+    type: object
+  http.ProfileUpsertRequest:
+    properties:
+      dislikes:
+        items:
+          type: string
+        type: array
+      embedding:
+        items:
+          type: number
+        type: array
+      friend_id:
+        type: string
+      likes:
+        items:
+          type: string
+        type: array
+    type: object
+  http.UserUpsertRequest:
+    properties:
+      active:
+        type: boolean
+      birthDate:
+        type: string
+      city:
+        type: string
+      email:
+        type: string
+      fullName:
+        type: string
+      planId:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API para sugestões de presentes personalizadas.
+  title: Gift App API
+  version: "1.0"
+paths:
+  /friends/{friend_id}:
+    get:
+      parameters:
+      - description: ID do amigo
+        in: path
+        name: friend_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Friend'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Buscar amigo
+      tags:
+      - friends
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID do amigo
+        in: path
+        name: friend_id
+        required: true
+        type: string
+      - description: Dados a atualizar
+        in: body
+        name: friend
+        required: true
+        schema:
+          $ref: '#/definitions/http.FriendUpsertRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Friend'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Atualizar amigo
+      tags:
+      - friends
+  /friends/{friend_id}/gifts:
+    get:
+      parameters:
+      - description: ID do amigo
+        in: path
+        name: friend_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Gift'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Listar sugestões de presente
+      tags:
+      - gifts
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID do amigo
+        in: path
+        name: friend_id
+        required: true
+        type: string
+      - description: Dados do presente
+        in: body
+        name: gift
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Gift'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Gift'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Criar sugestão de presente
+      tags:
+      - gifts
+  /friends/{friend_id}/profile:
+    get:
+      parameters:
+      - description: ID do amigo
+        in: path
+        name: friend_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Profile'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Buscar perfil do amigo
+      tags:
+      - profiles
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID do amigo
+        in: path
+        name: friend_id
+        required: true
+        type: string
+      - description: Dados do perfil
+        in: body
+        name: profile
+        required: true
+        schema:
+          $ref: '#/definitions/http.ProfileUpsertRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Profile'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Criar ou atualizar perfil do amigo
+      tags:
+      - profiles
+  /gifts/{gift_id}:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID do presente
+        in: path
+        name: gift_id
+        required: true
+        type: string
+      - description: Dados a atualizar
+        in: body
+        name: gift
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Gift'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Gift'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Atualizar sugestão de presente
+      tags:
+      - gifts
+  /reminders/{reminder_id}:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID do lembrete
+        in: path
+        name: reminder_id
+        required: true
+        type: string
+      - description: Dados a atualizar
+        in: body
+        name: reminder
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Reminder'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Reminder'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Atualizar lembrete
+      tags:
+      - reminders
+  /users:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Dados do usuário
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/http.UserUpsertRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.User'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Conflict
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Criar usuário
+      tags:
+      - users
+  /users/{user_id}:
+    get:
+      parameters:
+      - description: ID do usuário
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.User'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Buscar usuário
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID do usuário
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Dados a atualizar
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/http.UserUpsertRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.User'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Conflict
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Atualizar usuário
+      tags:
+      - users
+  /users/{user_id}/friends:
+    get:
+      parameters:
+      - description: ID do usuário
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Friend'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Listar amigos do usuário
+      tags:
+      - friends
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID do usuário
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Dados do amigo
+        in: body
+        name: friend
+        required: true
+        schema:
+          $ref: '#/definitions/http.FriendUpsertRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Friend'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Criar amigo
+      tags:
+      - friends
+  /users/{user_id}/reminders:
+    get:
+      parameters:
+      - description: ID do usuário
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Reminder'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Listar lembretes do usuário
+      tags:
+      - reminders
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID do usuário
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Dados do lembrete
+        in: body
+        name: reminder
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Reminder'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Reminder'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Criar lembrete
+      tags:
+      - reminders
+swagger: "2.0"
