@@ -40,13 +40,13 @@ python -m mcp_server.server
 - `GET /health`
 - `POST /profiles/agent/chat` (conversa com memoria em cache)
 - `POST /profiles/agent/finalize` (salva profile e embedding com base em toda conversa)
-- `DELETE /profiles/agent/session/{session_id}` (limpa memoria de conversa usando friend_id)
-- `POST /profiles/{friend_id}/suggestions` (body deve conter `occasion_details`; cria sugestoes iniciais e sessao por `gift_id`)
+- `DELETE /profiles/agent/session/{sessionId}` (limpa memoria de conversa usando friendID)
+- `POST /profiles/{friendId}/suggestions` (body deve conter `occasionDetails`; cria sugestoes iniciais e sessao por `giftID`)
 - `POST /suggestions/agent/chat`
 - `POST /suggestions/agent/finalize`
 
 ## Observacoes de integracao com o swagger
-- Profiles: integra com `PUT/GET /friends/{friend_id}/profile`
-- Sugestoes: integra com `PUT/GET /friends/{friend_id}/gifts` e cria conversa por `gift_id`
-- Sugestoes refinadas apos conversa sao persistidas via `POST /gifts/{gift_id}` e mantem `reminder_id` quando presente
-- Eventos: integra com reminders via `PUT/GET /users/{user_id}/reminders` com filtro por `friend_id`
+- Profiles: integra com `PUT/GET /friends/{friendId}/profile`
+- Sugestoes: integra com `PUT/GET /friends/{friendId}/gifts` e cria conversa por `giftID`
+- Sugestoes refinadas apos conversa sao persistidas via `POST /gifts/{giftId}` e mantem `reminderID` quando presente
+- Eventos: integra com reminders via `PUT/GET /users/{userId}/reminders` com filtro por `friendID`

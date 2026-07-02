@@ -9,15 +9,20 @@ class SuggestionService:
 
     async def create_suggestions(self, friend_id: str, payload: dict[str, Any]) -> dict[str, Any]:
         suggestions = payload.get("suggestions", [])
-        reminder_id = str(payload.get("reminder_id", "")).strip()
+        reminder_id = str(
+            payload.get("reminderID")
+            or payload.get("reminderId")
+            or payload.get("reminder_id")
+            or ""
+        ).strip()
         saved_items: list[dict[str, Any]] = []
 
         for suggestion in suggestions:
             gift_payload = {
                 "friendID": friend_id,
                 "title": suggestion.get("title", ""),
-                "description": suggestion.get("reason", ""),
-                "priceRange": suggestion.get("price_range", ""),
+                "description": suggestion.get("reason") or suggestion.get("description", ""),
+                "priceRange": suggestion.get("priceRange") or suggestion.get("price_range", ""),
                 "tags": [suggestion.get("type", "gift")],
             }
             if reminder_id:
@@ -25,7 +30,7 @@ class SuggestionService:
             saved_items.append(await self._data_backend_client.create_friend_gift(friend_id, gift_payload))
 
         return {
-            "friend_id": friend_id,
+            "friendID": friend_id,
             "saved": len(saved_items),
             "items": saved_items,
         }

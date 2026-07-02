@@ -17,7 +17,7 @@ _embedding_service = EmbeddingService(_data_backend_client, EmbeddingClient())
 @tool
 async def create_or_update_profile(payload: dict[str, Any]) -> dict[str, Any]:
     """Cria ou atualiza perfil no backend de dados."""
-    friend_id = payload.get("friend_id")
+    friend_id = payload.get("friendID") or payload.get("friendId") or payload.get("friend_id")
     if friend_id:
         return await _profile_service.update_profile(str(friend_id), payload)
     return await _profile_service.create_profile(payload)

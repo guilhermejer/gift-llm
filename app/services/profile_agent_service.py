@@ -68,19 +68,19 @@ class ProfileAgentService:
             dislikes = ["desconhecido"]
 
         profile_payload: dict[str, Any] = {
-            "friend_id": state.friend_id,
+            "friendID": state.friend_id,
             "likes": likes,
             "dislikes": dislikes,
             "personality": personality,
             "name": extracted.get("name", ""),
             "city": extracted.get("city", ""),
-            "user_relation": extracted.get("user_relation", ""),
+            "userRelation": extracted.get("user_relation", ""),
             "conversation_history": conversation_text,
         }
 
         profile_result = await self._profile_service.create_profile(
             {
-                "friend_id": state.friend_id,
+                "friendID": state.friend_id,
                 "likes": likes,
                 "dislikes": dislikes,
                 "personality": personality,
@@ -161,11 +161,11 @@ class ProfileAgentService:
         try:
             payload = await self._profile_service.get_friend(friend_id)
         except DataBackendRequestError:
-            return {"friend_id": friend_id}
+            return {"friendID": friend_id}
 
         if isinstance(payload, dict):
             return payload
-        return {"friend_id": friend_id}
+        return {"friendID": friend_id}
 
     async def _build_friend_context(self, friend_id: str) -> str:
         friend_data = await self._get_friend_data(friend_id)

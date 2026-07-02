@@ -1,0 +1,1060 @@
+basePath: /
+definitions:
+  domain.Friend:
+    properties:
+      birthDate:
+        example: "1994-10-03T00:00:00Z"
+        format: date-time
+        type: string
+      city:
+        example: Belo Horizonte
+        type: string
+      friendID:
+        example: 9b02ce54-4f42-4a8b-a539-5b53a6e37e63
+        type: string
+      gender:
+        allOf:
+        - $ref: '#/definitions/domain.Gender'
+        example: female
+      name:
+        example: Mariana Souza
+        type: string
+      profile:
+        $ref: '#/definitions/domain.Profile'
+      userID:
+        example: 5581a365-394f-467d-ae13-0d01e4cf1863
+        type: string
+      userRelation:
+        example: irma
+        type: string
+    type: object
+  domain.Gender:
+    enum:
+    - male
+    - female
+    - other
+    type: string
+    x-enum-varnames:
+    - GenderMale
+    - GenderFemale
+    - GenderOther
+  domain.Gift:
+    properties:
+      description:
+        type: string
+      friendID:
+        type: string
+      giftID:
+        type: string
+      occasionDetails:
+        type: string
+      priceRange:
+        type: string
+      reminderID:
+        type: string
+      tags:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+    type: object
+  domain.Profile:
+    properties:
+      dislikes:
+        items:
+          type: string
+        type: array
+      embedding:
+        items:
+          type: number
+        type: array
+      friendID:
+        type: string
+      likes:
+        items:
+          type: string
+        type: array
+      personality:
+        items:
+          type: string
+        type: array
+    type: object
+  domain.Reminder:
+    properties:
+      friendID:
+        example: 9b02ce54-4f42-4a8b-a539-5b53a6e37e63
+        type: string
+      message:
+        example: Comprar presente ate uma semana antes
+        type: string
+      reminderID:
+        example: d8c8efdf-c52f-4d6b-8e2e-b83f78de4f77
+        type: string
+      triggerAt:
+        example: "2026-08-15T00:00:00Z"
+        format: date-time
+        type: string
+      type:
+        example: birthday
+        type: string
+      userID:
+        example: 5581a365-394f-467d-ae13-0d01e4cf1863
+        type: string
+    type: object
+  domain.User:
+    properties:
+      active:
+        example: true
+        type: boolean
+      birthDate:
+        example: "1999-03-16T00:00:00Z"
+        format: date-time
+        type: string
+      city:
+        example: Santo Andre
+        type: string
+      email:
+        example: guilherme.jer1@gmail.com
+        type: string
+      fullName:
+        example: Guilherme Jeronymo
+        type: string
+      planID:
+        example: ""
+        type: string
+      userID:
+        example: 5581a365-394f-467d-ae13-0d01e4cf1863
+        type: string
+    type: object
+  http.AgentChatRequest:
+    properties:
+      friendID:
+        example: 9b02ce54-4f42-4a8b-a539-5b53a6e37e63
+        type: string
+      message:
+        example: Ela prefere experiencias ou objetos?
+        type: string
+    type: object
+  http.AgentFinalizeRequest:
+    properties:
+      friendID:
+        example: 9b02ce54-4f42-4a8b-a539-5b53a6e37e63
+        type: string
+    type: object
+  http.ErrorResponse:
+    properties:
+      error:
+        example: birthDate must be in format YYYY-MM-DD
+        type: string
+    type: object
+  http.FriendUpsertRequest:
+    properties:
+      birthDate:
+        example: "1994-10-03"
+        format: date
+        type: string
+      city:
+        example: Belo Horizonte
+        type: string
+      gender:
+        example: female
+        type: string
+      name:
+        example: Mariana Souza
+        type: string
+      userRelation:
+        example: irma
+        type: string
+    type: object
+  http.GiftUpsertRequest:
+    properties:
+      description:
+        example: Edicao especial de fotografia urbana
+        type: string
+      friendID:
+        example: 9b02ce54-4f42-4a8b-a539-5b53a6e37e63
+        type: string
+      occasionDetails:
+        example: Aniversario em 2026-08-15; gosta de arte visual
+        type: string
+      priceRange:
+        example: R$ 120 - R$ 180
+        type: string
+      reminderID:
+        example: d8c8efdf-c52f-4d6b-8e2e-b83f78de4f77
+        type: string
+      tags:
+        example:
+        - fotografia
+        - livros
+        - arte
+        items:
+          type: string
+        type: array
+      title:
+        example: Livro de fotografia
+        type: string
+    type: object
+  http.ProfileUpsertRequest:
+    properties:
+      dislikes:
+        example:
+        - multidoes
+        - atraso
+        items:
+          type: string
+        type: array
+      embedding:
+        example:
+        - 0.12
+        - -0.44
+        - 0.91
+        items:
+          type: number
+        type: array
+      friendID:
+        example: 9b02ce54-4f42-4a8b-a539-5b53a6e37e63
+        type: string
+      likes:
+        example:
+        - fotografia
+        - musica
+        - viagem
+        items:
+          type: string
+        type: array
+      personality:
+        example:
+        - introvertida
+        - criativa
+        - detalhista
+        items:
+          type: string
+        type: array
+    type: object
+  http.ReminderUpsertRequest:
+    properties:
+      friendID:
+        example: 9b02ce54-4f42-4a8b-a539-5b53a6e37e63
+        type: string
+      message:
+        example: Comprar presente ate uma semana antes
+        type: string
+      triggerAt:
+        example: "2026-08-15"
+        format: date
+        type: string
+      type:
+        example: birthday
+        type: string
+      userID:
+        example: a3f24e53-0d56-46d9-8ea2-0dbb5f64da8a
+        type: string
+    type: object
+  http.SuggestionChatRequest:
+    properties:
+      giftID:
+        example: 77a6f2b8-78f4-4cc3-bcc8-1e7f2499abf0
+        type: string
+      message:
+        example: Pode sugerir uma opcao mais economica?
+        type: string
+    type: object
+  http.SuggestionCreateRequest:
+    properties:
+      occasionDetails:
+        example: Aniversario em 2026-08-15, prefere experiencias ao ar livre
+        type: string
+      reminderID:
+        example: d8c8efdf-c52f-4d6b-8e2e-b83f78de4f77
+        type: string
+    type: object
+  http.SuggestionFinalizeRequest:
+    properties:
+      giftID:
+        example: 77a6f2b8-78f4-4cc3-bcc8-1e7f2499abf0
+        type: string
+    type: object
+  http.UserUpsertRequest:
+    properties:
+      active:
+        example: true
+        type: boolean
+      birthDate:
+        example: "1992-07-21"
+        format: date
+        type: string
+      city:
+        example: Sao Paulo
+        type: string
+      email:
+        example: ana.souza@email.com
+        type: string
+      fullName:
+        example: Ana Souza
+        type: string
+      planId:
+        example: basic
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API para sugestões de presentes personalizadas.
+  title: Gift App API
+  version: "1.0"
+paths:
+  /friends/{friendId}:
+    get:
+      parameters:
+      - description: ID do amigo
+        in: path
+        name: friendId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Friend'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Buscar amigo
+      tags:
+      - friends
+    post:
+      consumes:
+      - application/json
+      description: 'Exemplo de payload: {"userRelation":"prima","name":"Mariana Souza","gender":"female","birthDate":"1994-10-03","city":"Curitiba"}.
+        Campo birthDate no formato YYYY-MM-DD.'
+      parameters:
+      - description: ID do amigo
+        in: path
+        name: friendId
+        required: true
+        type: string
+      - description: Dados a atualizar
+        in: body
+        name: friend
+        required: true
+        schema:
+          $ref: '#/definitions/http.FriendUpsertRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Friend'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Atualizar amigo
+      tags:
+      - friends
+  /friends/{friendId}/gifts:
+    get:
+      parameters:
+      - description: ID do amigo
+        in: path
+        name: friendId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Gift'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Listar sugestões de presente
+      tags:
+      - gifts
+    put:
+      consumes:
+      - application/json
+      description: 'Exemplo de payload: {"title":"Livro de fotografia","description":"Edicao
+        especial de fotografia urbana","priceRange":"R$ 120 - R$ 180","tags":["fotografia","livros","arte"],"occasionDetails":"Aniversario
+        em 2026-08-15; gosta de arte visual","reminderID":"d8c8efdf-c52f-4d6b-8e2e-b83f78de4f77"}.'
+      parameters:
+      - description: ID do amigo
+        in: path
+        name: friendId
+        required: true
+        type: string
+      - description: Dados do presente
+        in: body
+        name: gift
+        required: true
+        schema:
+          $ref: '#/definitions/http.GiftUpsertRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Gift'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Criar sugestão de presente
+      tags:
+      - gifts
+  /friends/{friendId}/profile:
+    get:
+      parameters:
+      - description: ID do amigo
+        in: path
+        name: friendId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Profile'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Buscar perfil do amigo
+      tags:
+      - profiles
+    put:
+      consumes:
+      - application/json
+      description: 'Exemplo de payload: {"friendID":"9b02ce54-4f42-4a8b-a539-5b53a6e37e63","likes":["fotografia","musica","viagem"],"dislikes":["multidoes","atraso"],"personality":["introvertida","criativa"],"embedding":[0.12,-0.44,0.91]}.'
+      parameters:
+      - description: ID do amigo
+        in: path
+        name: friendId
+        required: true
+        type: string
+      - description: Dados do perfil
+        in: body
+        name: profile
+        required: true
+        schema:
+          $ref: '#/definitions/http.ProfileUpsertRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Profile'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Criar ou atualizar perfil do amigo
+      tags:
+      - profiles
+  /gifts/{giftId}:
+    post:
+      consumes:
+      - application/json
+      description: 'Exemplo de payload: {"title":"Camera instantanea","description":"Modelo
+        compacto","priceRange":"R$ 300 - R$ 450","tags":["fotografia","tecnologia"],"occasionDetails":"Formatura
+        em 2026-12-10"}.'
+      parameters:
+      - description: ID do presente
+        in: path
+        name: giftId
+        required: true
+        type: string
+      - description: Dados a atualizar
+        in: body
+        name: gift
+        required: true
+        schema:
+          $ref: '#/definitions/http.GiftUpsertRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Gift'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Atualizar sugestão de presente
+      tags:
+      - gifts
+  /profiles/{friendId}/suggestions:
+    post:
+      consumes:
+      - application/json
+      description: 'Exemplo de payload: {"occasionDetails":"Aniversario em 2026-08-15,
+        prefere experiencias ao ar livre","reminderID":"d8c8efdf-c52f-4d6b-8e2e-b83f78de4f77"}.'
+      parameters:
+      - description: ID do friend
+        in: path
+        name: friendId
+        required: true
+        type: string
+      - description: Dados da ocasião
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/http.SuggestionCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Criar sugestão inicial para friend
+      tags:
+      - suggestion-agent
+  /profiles/agent/chat:
+    post:
+      consumes:
+      - application/json
+      description: 'Exemplo de payload: {"friendID":"9b02ce54-4f42-4a8b-a539-5b53a6e37e63","message":"Ela
+        prefere experiencias ou objetos?"}.'
+      parameters:
+      - description: Payload do chat
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/http.AgentChatRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Conversar com profile agent
+      tags:
+      - profile-agent
+  /profiles/agent/finalize:
+    post:
+      consumes:
+      - application/json
+      description: 'Exemplo de payload: {"friendID":"9b02ce54-4f42-4a8b-a539-5b53a6e37e63"}.'
+      parameters:
+      - description: Payload de finalização
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/http.AgentFinalizeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Finalizar sessão de profile agent
+      tags:
+      - profile-agent
+  /profiles/agent/session/{friendId}:
+    delete:
+      parameters:
+      - description: ID do friend
+        in: path
+        name: friendId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Remover sessão do profile agent
+      tags:
+      - profile-agent
+  /reminders/{reminderId}:
+    post:
+      consumes:
+      - application/json
+      description: 'Exemplo de payload: {"userID":"a3f24e53-0d56-46d9-8ea2-0dbb5f64da8a","friendID":"9b02ce54-4f42-4a8b-a539-5b53a6e37e63","type":"anniversary","triggerAt":"2026-09-20","message":"Enviar
+        flores"}. Campo triggerAt no formato YYYY-MM-DD.'
+      parameters:
+      - description: ID do lembrete
+        in: path
+        name: reminderId
+        required: true
+        type: string
+      - description: Dados a atualizar
+        in: body
+        name: reminder
+        required: true
+        schema:
+          $ref: '#/definitions/http.ReminderUpsertRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Reminder'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Atualizar lembrete
+      tags:
+      - reminders
+  /suggestions/agent/chat:
+    post:
+      consumes:
+      - application/json
+      description: 'Exemplo de payload: {"giftID":"77a6f2b8-78f4-4cc3-bcc8-1e7f2499abf0","message":"Pode
+        sugerir uma opcao mais economica?"}.'
+      parameters:
+      - description: Payload do chat
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/http.SuggestionChatRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Conversar para refinar sugestão por gift
+      tags:
+      - suggestion-agent
+  /suggestions/agent/finalize:
+    post:
+      consumes:
+      - application/json
+      description: 'Exemplo de payload: {"giftID":"77a6f2b8-78f4-4cc3-bcc8-1e7f2499abf0"}.'
+      parameters:
+      - description: Payload de finalização
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/http.SuggestionFinalizeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Finalizar refinamento de sugestão por gift
+      tags:
+      - suggestion-agent
+  /users:
+    put:
+      consumes:
+      - application/json
+      description: 'Exemplo de payload: {"fullName":"Ana Souza","email":"ana.souza@email.com","active":true,"planId":"basic","birthDate":"1992-07-21","city":"Sao
+        Paulo"}. Campo birthDate no formato YYYY-MM-DD.'
+      parameters:
+      - description: Dados do usuário
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/http.UserUpsertRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Criar usuário
+      tags:
+      - users
+  /users/{userId}:
+    get:
+      parameters:
+      - description: ID do usuário
+        in: path
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.User'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Buscar usuário
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      description: 'Exemplo de payload: {"fullName":"Ana Souza","email":"ana.novo@email.com","active":true,"planId":"pro","birthDate":"1992-07-21","city":"Campinas"}.
+        Campo birthDate no formato YYYY-MM-DD.'
+      parameters:
+      - description: ID do usuário
+        in: path
+        name: userId
+        required: true
+        type: string
+      - description: Dados a atualizar
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/http.UserUpsertRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Atualizar usuário
+      tags:
+      - users
+  /users/{userId}/friends:
+    get:
+      parameters:
+      - description: ID do usuário
+        in: path
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Friend'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Listar amigos do usuário
+      tags:
+      - friends
+    put:
+      consumes:
+      - application/json
+      description: 'Exemplo de payload: {"userRelation":"irma","name":"Mariana Souza","gender":"female","birthDate":"1994-10-03","city":"Belo
+        Horizonte"}. Campo birthDate no formato YYYY-MM-DD.'
+      parameters:
+      - description: ID do usuário
+        in: path
+        name: userId
+        required: true
+        type: string
+      - description: Dados do amigo
+        in: body
+        name: friend
+        required: true
+        schema:
+          $ref: '#/definitions/http.FriendUpsertRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Friend'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Criar amigo
+      tags:
+      - friends
+  /users/{userId}/reminders:
+    get:
+      parameters:
+      - description: ID do usuário
+        in: path
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Reminder'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Listar lembretes do usuário
+      tags:
+      - reminders
+    put:
+      consumes:
+      - application/json
+      description: 'Exemplo de payload: {"friendID":"9b02ce54-4f42-4a8b-a539-5b53a6e37e63","type":"birthday","triggerAt":"2026-08-15","message":"Comprar
+        presente ate uma semana antes"}. Campo triggerAt no formato YYYY-MM-DD.'
+      parameters:
+      - description: ID do usuário
+        in: path
+        name: userId
+        required: true
+        type: string
+      - description: Dados do lembrete
+        in: body
+        name: reminder
+        required: true
+        schema:
+          $ref: '#/definitions/http.ReminderUpsertRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Reminder'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Criar lembrete
+      tags:
+      - reminders
+  /users/email:
+    get:
+      parameters:
+      - description: Email do usuário
+        in: query
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Buscar usuário por email
+      tags:
+      - users
+swagger: "2.0"

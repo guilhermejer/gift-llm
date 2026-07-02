@@ -22,9 +22,38 @@ _suggestion_agent_service = SuggestionAgentService(
 )
 
 
+def _read_text(payload: dict[str, Any], *keys: str) -> str:
+    for key in keys:
+        value = payload.get(key)
+        if str(value or "").strip():
+            return str(value).strip()
+    return ""
+
+
+def _to_camel_key(key: str) -> str:
+    if "_" in key:
+        head, *tail = key.split("_")
+        camel = head + "".join(part.capitalize() for part in tail)
+    else:
+        camel = key
+
+    if camel.endswith("Id"):
+        return camel[:-2] + "ID"
+    return camel
+
+
+def _to_camel_payload(value: Any) -> Any:
+    if isinstance(value, dict):
+        return {_to_camel_key(str(k)): _to_camel_payload(v) for k, v in value.items()}
+    if isinstance(value, list):
+        return [_to_camel_payload(item) for item in value]
+    return value
+
+
 def _validate_suggestions_payload(payload: dict[str, Any]) -> None:
-    required_fields = ["occasion_details"]
-    missing = [field for field in required_fields if not str(payload.get(field, "")).strip()]
+    required_fields = ["occasionDetails"]
+    occasion_details = _read_text(payload, "occasionDetails", "occasion_details")
+    missing = [field for field in required_fields if not occasion_details]
     if missing:
         raise HTTPException(status_code=400, detail=f"Campos obrigatorios ausentes: {', '.join(missing)}")
 
@@ -44,7 +73,7 @@ def _validate_suggestions_payload(payload: dict[str, Any]) -> None:
 
 
 @router.post(
-    "/profiles/{friend_id}/suggestions",
+    "/profiles/{friendId}/suggestions",
     summary="Criar sugestões iniciais",
     description=(
         "Cria sugestões iniciais (batch/on-demand) com base no contexto do profile e detalhes da ocasião."
@@ -60,10 +89,10 @@ def _validate_suggestions_payload(payload: dict[str, Any]) -> None:
                 "application/json": {
                     "schema": {
                         "type": "object",
-                        "required": ["occasion_details"],
+                        "required": ["occasionDetails"],
                         "properties": {
-                            "occasion_details": {"type": "string"},
-                            "reminder_id": {"type": "string", "format": "uuid", "nullable": True},
+                            "occasionDetails": {"type": "string"},
+                            "reminderID": {"type": "string", "format": "uuid", "nullable": True},
                             "suggestions": {
                                 "type": "array",
                                 "items": {
@@ -72,7 +101,7 @@ def _validate_suggestions_payload(payload: dict[str, Any]) -> None:
                                     "properties": {
                                         "title": {"type": "string"},
                                         "reason": {"type": "string"},
-                                        "price_range": {"type": "string"},
+                                        "priceRange": {"type": "string"},
                                         "tags": {"type": "array", "items": {"type": "string"}},
                                     },
                                 },
@@ -80,19 +109,20 @@ def _validate_suggestions_payload(payload: dict[str, Any]) -> None:
                         },
                     },
                     "example": {
-                        "occasion_details": "Aniversário de 30 anos, gosta de tecnologia",
-                        "reminder_id": "32aab795-a9f8-4e25-a4b7-6fd080c97a18",
+                        "occasionDetails": "Aniversário de 30 anos, gosta de tecnologia",
+                        "reminderID": "32aab795-a9f8-4e25-a4b7-6fd080c97a18",
                     },
                 }
             },
         }
     },
 )
-async def create_profile_suggestions(friend_id: str, request: Request) -> dict[str, Any]:
+async def create_profile_suggestions(friendId: str, request: Request) -> dict[str, Any]:
     payload = await request.json()
     _validate_suggestions_payload(payload)
     try:
-        return await _suggestion_agent_service.create_initial_suggestions(friend_id, payload)
+        result = await _suggestion_agent_service.create_initial_suggestions(friendId, payload)
+        return _to_camel_payload(result)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
@@ -101,7 +131,7 @@ async def create_profile_suggestions(friend_id: str, request: Request) -> dict[s
     "/suggestions/agent/chat",
     summary="Conversar com suggestion agent",
     description=(
-        "Continua a conversa de refinamento de uma sugestão específica usando gift_id como chave de sessão."
+        "Continua a conversa de refinamento de uma sugestão específica usando giftID como chave de sessão."
     ),
     responses={
         200: {"description": "Mensagem do agente retornada"},
@@ -115,16 +145,16 @@ async def create_profile_suggestions(friend_id: str, request: Request) -> dict[s
                 "application/json": {
                     "schema": {
                         "type": "object",
-                        "required": ["gift_id", "message"],
+                        "required": ["giftID", "message"],
                         "properties": {
-                            "gift_id": {"type": "string", "format": "uuid"},
+                            "giftID": {"type": "string", "format": "uuid"},
                             "message": {"type": "string"},
-                            "friend_id": {"type": "string", "format": "uuid"},
-                            "occasion_details": {"type": "string"},
+                            "friendID": {"type": "string", "format": "uuid"},
+                            "occasionDetails": {"type": "string"},
                         },
                     },
                     "example": {
-                        "gift_id": "a6501206-411e-4a34-8217-bf35974f86e9",
+                        "giftID": "a6501206-411e-4a34-8217-bf35974f86e9",
                         "message": "Quero algo mais personalizado e até R$200",
                     },
                 }
@@ -134,15 +164,15 @@ async def create_profile_suggestions(friend_id: str, request: Request) -> dict[s
 )
 async def chat_suggestion_agent(request: Request) -> dict[str, Any]:
     payload = await request.json()
-    gift_id = str(payload.get("gift_id", "")).strip()
+    gift_id = _read_text(payload, "giftID", "giftId", "gift_id")
     message = str(payload.get("message", "")).strip()
-    friend_id = str(payload.get("friend_id", "")).strip()
-    occasion_details = str(payload.get("occasion_details", "")).strip()
+    friend_id = _read_text(payload, "friendID", "friendId", "friend_id")
+    occasion_details = _read_text(payload, "occasionDetails", "occasion_details")
 
     missing_fields = [
         field
         for field, value in {
-            "gift_id": gift_id,
+            "giftID": gift_id,
             "message": message,
         }.items()
         if not value
@@ -151,12 +181,13 @@ async def chat_suggestion_agent(request: Request) -> dict[str, Any]:
         raise HTTPException(status_code=400, detail=f"Campos obrigatorios ausentes: {', '.join(missing_fields)}")
 
     try:
-        return await _suggestion_agent_service.chat(
+        result = await _suggestion_agent_service.chat(
             gift_id=gift_id,
             user_message=message,
             friend_id=friend_id or None,
             occasion_details=occasion_details,
         )
+        return _to_camel_payload(result)
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
 
@@ -177,15 +208,15 @@ async def chat_suggestion_agent(request: Request) -> dict[str, Any]:
                 "application/json": {
                     "schema": {
                         "type": "object",
-                        "required": ["gift_id"],
+                        "required": ["giftID"],
                         "properties": {
-                            "gift_id": {"type": "string", "format": "uuid"},
-                            "friend_id": {"type": "string", "format": "uuid"},
+                            "giftID": {"type": "string", "format": "uuid"},
+                            "friendID": {"type": "string", "format": "uuid"},
                         },
                     },
                     "example": {
-                        "gift_id": "a6501206-411e-4a34-8217-bf35974f86e9",
-                        "friend_id": "c096d057-a0cf-4c2d-857b-41beccb42de8",
+                        "giftID": "a6501206-411e-4a34-8217-bf35974f86e9",
+                        "friendID": "c096d057-a0cf-4c2d-857b-41beccb42de8",
                     },
                 }
             },
@@ -194,13 +225,14 @@ async def chat_suggestion_agent(request: Request) -> dict[str, Any]:
 )
 async def finalize_suggestion_agent(request: Request) -> dict[str, Any]:
     payload = await request.json()
-    gift_id = str(payload.get("gift_id", "")).strip()
-    friend_id = str(payload.get("friend_id", "")).strip()
+    gift_id = _read_text(payload, "giftID", "giftId", "gift_id")
+    friend_id = _read_text(payload, "friendID", "friendId", "friend_id")
     if not gift_id:
-        raise HTTPException(status_code=400, detail="Campo obrigatorio ausente: gift_id")
+        raise HTTPException(status_code=400, detail="Campo obrigatorio ausente: giftID")
 
     try:
-        return await _suggestion_agent_service.finalize_suggestion(gift_id=gift_id, friend_id=friend_id or None)
+        result = await _suggestion_agent_service.finalize_suggestion(gift_id=gift_id, friend_id=friend_id or None)
+        return _to_camel_payload(result)
     except ValueError as exc:
         detail = str(exc)
         status_code = 404 if detail == "Sessao de sugestao nao encontrada" else 400

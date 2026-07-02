@@ -17,7 +17,7 @@ class EmbeddingService:
         text = build_profile_embedding_text(profile_payload)
         embedding = await self._embedding_client.embed_text(text)
         request_payload: dict[str, Any] = {
-            "friend_id": friend_id,
+            "friendID": friend_id,
             "embedding": embedding,
         }
 

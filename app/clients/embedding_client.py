@@ -21,12 +21,12 @@ class EmbeddingClient:
 
 def build_profile_embedding_text(profile_payload: dict[str, Any]) -> str:
     fields = [
-        str(profile_payload.get("friend_id", "")),
+        str(profile_payload.get("friendID") or profile_payload.get("friendId") or profile_payload.get("friend_id", "")),
         ", ".join(profile_payload.get("likes", []) or []),
         ", ".join(profile_payload.get("dislikes", []) or []),
         str(profile_payload.get("name", "")),
         str(profile_payload.get("city", "")),
-        str(profile_payload.get("user_relation", "")),
+        str(profile_payload.get("userRelation") or profile_payload.get("user_relation", "")),
         str(profile_payload.get("conversation_history", "")),
     ]
     return " | ".join([field for field in fields if field])

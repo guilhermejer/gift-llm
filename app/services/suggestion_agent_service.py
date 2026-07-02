@@ -26,7 +26,7 @@ class SuggestionAgentService:
 
     async def create_initial_suggestions(self, friend_id: str, payload: dict[str, Any]) -> dict[str, Any]:
         occasion_context = _build_occasion_context(payload)
-        reminder_id = _read_text(payload, "reminder_id", "reminderID", "ReminderID")
+        reminder_id = _read_text(payload, "reminderID", "reminderId", "ReminderID", "reminder_id")
 
         raw_suggestions = payload.get("suggestions")
         if isinstance(raw_suggestions, list) and raw_suggestions:
@@ -36,7 +36,7 @@ class SuggestionAgentService:
 
         saved_result = await self._suggestion_service.create_suggestions(
             friend_id,
-            {"suggestions": suggestions, "reminder_id": reminder_id},
+            {"suggestions": suggestions, "reminderID": reminder_id},
         )
 
         sessions: list[dict[str, Any]] = []
@@ -57,8 +57,8 @@ class SuggestionAgentService:
 
         return {
             **saved_result,
-            "occasion_context": occasion_context,
-            "reminder_id": reminder_id,
+            "occasionContext": occasion_context,
+            "reminderID": reminder_id,
             "sessions": sessions,
         }
 
@@ -109,7 +109,7 @@ class SuggestionAgentService:
 
         return {
             "session": self._memory_service.session_snapshot(state.session_id),
-            "assistant_message": assistant_message,
+            "assistantMessage": assistant_message,
         }
 
     async def finalize_suggestion(self, gift_id: str, friend_id: str | None = None) -> dict[str, Any]:
@@ -137,7 +137,7 @@ class SuggestionAgentService:
             "friendID": state.friend_id,
             "title": extracted.get("title", ""),
             "description": extracted.get("description", ""),
-            "priceRange": extracted.get("price_range", ""),
+            "priceRange": extracted.get("priceRange") or extracted.get("price_range", ""),
             "tags": extracted.get("tags", ["gift"]),
         }
         if state.reminder_id:
@@ -158,12 +158,12 @@ class SuggestionAgentService:
         return {
             "session": self._memory_service.session_snapshot(gift_id),
             "gift": persisted,
-            "extracted_suggestion": extracted,
+            "extractedSuggestion": extracted,
         }
 
     def clear_session(self, gift_id: str) -> dict[str, Any]:
         removed = self._memory_service.clear_session(gift_id)
-        return {"session_id": gift_id, "cleared": removed}
+        return {"sessionID": gift_id, "cleared": removed}
 
     async def _generate_initial_suggestions(
         self,
@@ -172,7 +172,7 @@ class SuggestionAgentService:
         payload: dict[str, Any],
     ) -> list[dict[str, Any]]:
         friend_context = await self._build_friend_context(friend_id)
-        suggestion_count = _safe_positive_int(payload.get("suggestion_count"), default=3)
+        suggestion_count = _safe_positive_int(payload.get("suggestionCount", payload.get("suggestion_count")), default=3)
 
         prompt = (
             "Gere sugestoes iniciais de presentes em portugues com base no contexto abaixo. "
@@ -366,10 +366,10 @@ def _build_gift_context(saved_item: dict[str, Any], suggestion: dict[str, Any]) 
 
 def _build_occasion_context(payload: dict[str, Any]) -> str:
     source = str(payload.get("source", "on_demand")).strip() or "on_demand"
-    occasion_type = str(payload.get("occasion_type", "")).strip()
-    occasion_name = str(payload.get("occasion_name", payload.get("event_name", ""))).strip()
-    occasion_date = str(payload.get("occasion_date", payload.get("event_date", ""))).strip()
-    occasion_details = str(payload.get("occasion_details", "")).strip()
+    occasion_type = str(payload.get("occasionType", payload.get("occasion_type", ""))).strip()
+    occasion_name = str(payload.get("occasionName", payload.get("occasion_name", payload.get("eventName", payload.get("event_name", ""))))).strip()
+    occasion_date = str(payload.get("occasionDate", payload.get("occasion_date", payload.get("eventDate", payload.get("event_date", ""))))).strip()
+    occasion_details = str(payload.get("occasionDetails", payload.get("occasion_details", ""))).strip()
 
     details: list[str] = [f"origem={source}"]
     if occasion_type:
