@@ -151,7 +151,7 @@ class ProfileAgentService:
             "friend_id": friend_id,
             "likes": [str(item).strip() for item in likes if str(item).strip()],
             "dislikes": [str(item).strip() for item in dislikes if str(item).strip()],
-            "personality": [str(item).strip() for item in personality if str(item).strip()],
+            "personality": _normalize_personality_values(personality),
             "name": str(data.get("name", "")).strip(),
             "city": str(data.get("city", "")).strip(),
             "user_relation": str(data.get("user_relation", "")).strip(),
@@ -214,3 +214,30 @@ def _safe_json_load(text: str) -> Any:
             return {}
 
     return {}
+
+
+def _normalize_personality_values(values: list[Any]) -> list[str]:
+    normalized: list[str] = []
+    seen: set[str] = set()
+
+    for item in values:
+        value = " ".join(str(item).split()).strip()
+        if not value:
+            continue
+
+        formatted = _capitalize_first_alpha(value)
+        dedupe_key = formatted.casefold()
+        if dedupe_key in seen:
+            continue
+
+        seen.add(dedupe_key)
+        normalized.append(formatted)
+
+    return normalized
+
+
+def _capitalize_first_alpha(text: str) -> str:
+    for index, char in enumerate(text):
+        if char.isalpha():
+            return text[:index] + char.upper() + text[index + 1 :]
+    return text

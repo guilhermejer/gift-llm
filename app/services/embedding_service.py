@@ -25,6 +25,8 @@ class EmbeddingService:
             request_payload["likes"] = profile_payload.get("likes")
         if "dislikes" in profile_payload:
             request_payload["dislikes"] = profile_payload.get("dislikes")
+        if "personality" in profile_payload:
+            request_payload["personality"] = profile_payload.get("personality")
 
         return await self._data_backend_client.save_profile_embedding(
             friend_id,

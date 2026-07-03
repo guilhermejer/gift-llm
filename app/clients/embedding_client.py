@@ -24,6 +24,7 @@ def build_profile_embedding_text(profile_payload: dict[str, Any]) -> str:
         str(profile_payload.get("friendID") or profile_payload.get("friendId") or profile_payload.get("friend_id", "")),
         ", ".join(profile_payload.get("likes", []) or []),
         ", ".join(profile_payload.get("dislikes", []) or []),
+        ", ".join(profile_payload.get("personality", []) or []),
         str(profile_payload.get("name", "")),
         str(profile_payload.get("city", "")),
         str(profile_payload.get("userRelation") or profile_payload.get("user_relation", "")),

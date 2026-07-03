@@ -2,6 +2,9 @@ basePath: /
 definitions:
   domain.Friend:
     properties:
+      avatar:
+        example: "\U0001F9D1‍\U0001F4BB"
+        type: string
       birthDate:
         example: "1994-10-03T00:00:00Z"
         format: date-time
@@ -150,6 +153,9 @@ definitions:
     type: object
   http.FriendUpsertRequest:
     properties:
+      avatar:
+        example: "\U0001F9D1‍\U0001F4BB"
+        type: string
       birthDate:
         example: "1994-10-03"
         format: date
@@ -194,6 +200,34 @@ definitions:
         type: array
       title:
         example: Livro de fotografia
+        type: string
+    type: object
+  http.ProfilePhotoSignedURLRequest:
+    properties:
+      contentType:
+        example: image/jpeg
+        type: string
+      objectName:
+        example: friends/9b02ce54-4f42-4a8b-a539-5b53a6e37e63/profile-photo
+        type: string
+    type: object
+  http.ProfilePhotoSignedURLResponse:
+    properties:
+      expiresAt:
+        example: "2026-07-01T12:30:00Z"
+        format: date-time
+        type: string
+      friendId:
+        example: 9b02ce54-4f42-4a8b-a539-5b53a6e37e63
+        type: string
+      method:
+        example: PUT
+        type: string
+      objectName:
+        example: friends/9b02ce54-4f42-4a8b-a539-5b53a6e37e63/profile-photo
+        type: string
+      url:
+        example: https://storage.googleapis.com/...
         type: string
     type: object
   http.ProfileUpsertRequest:
@@ -334,8 +368,9 @@ paths:
     post:
       consumes:
       - application/json
-      description: 'Exemplo de payload: {"userRelation":"prima","name":"Mariana Souza","gender":"female","birthDate":"1994-10-03","city":"Curitiba"}.
-        Campo birthDate no formato YYYY-MM-DD.'
+      description: "Exemplo de payload: {\"userRelation\":\"prima\",\"name\":\"Mariana
+        Souza\",\"avatar\":\"\U0001F3A8\",\"gender\":\"female\",\"birthDate\":\"1994-10-03\",\"city\":\"Curitiba\"}.
+        Campo birthDate no formato YYYY-MM-DD."
       parameters:
       - description: ID do amigo
         in: path
@@ -502,6 +537,159 @@ paths:
       summary: Criar ou atualizar perfil do amigo
       tags:
       - profiles
+  /friends/{friendId}/profile-photo/delete-url:
+    post:
+      consumes:
+      - application/json
+      description: O front deve usar a URL retornada com o metodo DELETE. Se objectName
+        nao for enviado, usa friends/{friendId}/profile-photo.
+      parameters:
+      - description: ID do amigo
+        in: path
+        name: friendId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.ProfilePhotoSignedURLResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Gerar URL assinada para remover a foto do amigo
+      tags:
+      - profile-photos
+  /friends/{friendId}/profile-photo/get-url:
+    post:
+      consumes:
+      - application/json
+      description: O front deve usar a URL retornada com o metodo GET para obter a
+        foto. Se objectName nao for enviado, usa friends/{friendId}/profile-photo.jpg.
+      parameters:
+      - description: ID do amigo
+        in: path
+        name: friendId
+        required: true
+        type: string
+      - description: 'Opcional: objectName especifico'
+        in: body
+        name: payload
+        schema:
+          $ref: '#/definitions/http.ProfilePhotoSignedURLRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.ProfilePhotoSignedURLResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Gerar URL assinada para leitura da foto do amigo
+      tags:
+      - profile-photos
+  /friends/{friendId}/profile-photo/update-url:
+    post:
+      consumes:
+      - application/json
+      description: O front deve usar a URL retornada com o metodo PUT. Se objectName
+        nao for enviado, usa friends/{friendId}/profile-photo.
+      parameters:
+      - description: ID do amigo
+        in: path
+        name: friendId
+        required: true
+        type: string
+      - description: Dados do arquivo
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/http.ProfilePhotoSignedURLRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.ProfilePhotoSignedURLResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Gerar URL assinada para atualizar a foto do amigo
+      tags:
+      - profile-photos
+  /friends/{friendId}/profile-photo/upload-url:
+    post:
+      consumes:
+      - application/json
+      description: O front deve usar a URL retornada com o metodo PUT. Se objectName
+        nao for enviado, usa friends/{friendId}/profile-photo.
+      parameters:
+      - description: ID do amigo
+        in: path
+        name: friendId
+        required: true
+        type: string
+      - description: Dados do arquivo
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/http.ProfilePhotoSignedURLRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.ProfilePhotoSignedURLResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Gerar URL assinada para upload da foto do amigo
+      tags:
+      - profile-photos
   /gifts/{giftId}:
     post:
       consumes:
@@ -936,8 +1124,9 @@ paths:
     put:
       consumes:
       - application/json
-      description: 'Exemplo de payload: {"userRelation":"irma","name":"Mariana Souza","gender":"female","birthDate":"1994-10-03","city":"Belo
-        Horizonte"}. Campo birthDate no formato YYYY-MM-DD.'
+      description: "Exemplo de payload: {\"userRelation\":\"irma\",\"name\":\"Mariana
+        Souza\",\"avatar\":\"\U0001F9D1‍\U0001F4BB\",\"gender\":\"female\",\"birthDate\":\"1994-10-03\",\"city\":\"Belo
+        Horizonte\"}. Campo birthDate no formato YYYY-MM-DD."
       parameters:
       - description: ID do usuário
         in: path
