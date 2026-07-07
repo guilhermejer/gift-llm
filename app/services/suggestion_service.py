@@ -23,8 +23,11 @@ class SuggestionService:
                 "title": suggestion.get("title", ""),
                 "description": suggestion.get("reason") or suggestion.get("description", ""),
                 "priceRange": suggestion.get("priceRange") or suggestion.get("price_range", ""),
-                "tags": [suggestion.get("type", "gift")],
+                "type": suggestion.get("type", "gift") or "gift",
             }
+            tags_raw = suggestion.get("tags", [])
+            if isinstance(tags_raw, list) and tags_raw:
+                gift_payload["tags"] = tags_raw
             if reminder_id:
                 gift_payload["reminderID"] = reminder_id
             saved_items.append(await self._data_backend_client.create_friend_gift(friend_id, gift_payload))

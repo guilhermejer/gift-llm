@@ -92,6 +92,11 @@ def _validate_suggestions_payload(payload: dict[str, Any]) -> None:
                         "required": ["occasionDetails"],
                         "properties": {
                             "occasionDetails": {"type": "string"},
+                            "suggestionType": {
+                                "type": "string",
+                                "enum": ["gift", "outing", "mixed"],
+                                "default": "mixed",
+                            },
                             "reminderID": {"type": "string", "format": "uuid", "nullable": True},
                             "suggestions": {
                                 "type": "array",

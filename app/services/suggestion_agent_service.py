@@ -173,11 +173,20 @@ class SuggestionAgentService:
     ) -> list[dict[str, Any]]:
         friend_context = await self._build_friend_context(friend_id)
         suggestion_count = _safe_positive_int(payload.get("suggestionCount", payload.get("suggestion_count")), default=3)
+        suggestion_type = str(payload.get("suggestionType", payload.get("suggestion_type", "mixed"))).strip().lower()
+
+        type_instruction_map = {
+            "gift": "Gere APENAS sugestoes de presentes fisicos (type='gift').",
+            "outing": "Gere APENAS sugestoes de passeios e experiencias (type='outing').",
+        }
+        type_instruction = type_instruction_map.get(suggestion_type, "Misture sugestoes de presentes e passeios quando fizer sentido (type='gift' ou 'outing').")
 
         prompt = (
-            "Gere sugestoes iniciais de presentes em portugues com base no contexto abaixo. "
+            f"{type_instruction} "
+            "Respeite o orcamento informado no contexto do amigo ao definir price_range. "
             "Retorne APENAS JSON valido, sem markdown, no formato: "
-            '{"suggestions":[{"title":"...","reason":"...","price_range":"...","type":"gift"}]}. '
+            '{"suggestions":[{"title":"...","reason":"...","price_range":"...","type":"gift","tags":["tag1","tag2"]}]}. '
+            "Inclua 2-3 tags relevantes por sugestao (ex: categoria, estilo, ocasiao). "
             f"Crie exatamente {suggestion_count} sugestoes objetivas e diferentes entre si."
         )
 
@@ -213,6 +222,9 @@ class SuggestionAgentService:
                     "type": str(item.get("type", "gift")).strip() or "gift",
                 }
             )
+            tags_raw = item.get("tags")
+            if isinstance(tags_raw, list) and tags_raw:
+                normalized[-1]["tags"] = [str(t).strip() for t in tags_raw if str(t).strip()]
 
         if not normalized:
             raise ValueError("Nao foi possivel gerar sugestoes iniciais validas")
@@ -252,6 +264,9 @@ class SuggestionAgentService:
             details.append("personalidade=" + ", ".join(str(item).strip() for item in personality if str(item).strip()))
         elif isinstance(personality, str) and personality:
             details.append(f"personalidade={personality}")
+        budget = _read_value(profile_payload, "budget", "Budget")
+        if budget:
+            details.append(f"orcamento={budget}")
         if "embedding" in profile_payload or "Embedding" in profile_payload:
             details.append("embedding_de_profile_persistido=disponivel")
 
