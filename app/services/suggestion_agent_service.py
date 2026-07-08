@@ -174,6 +174,9 @@ class SuggestionAgentService:
         friend_context = await self._build_friend_context(friend_id)
         suggestion_count = _safe_positive_int(payload.get("suggestionCount", payload.get("suggestion_count")), default=3)
         suggestion_type = str(payload.get("suggestionType", payload.get("suggestion_type", "mixed"))).strip().lower()
+        source = str(payload.get("source", "on_demand")).strip().lower()
+        if source == "automatic":
+            suggestion_count = min(suggestion_count, 2)
 
         type_instruction_map = {
             "gift": "Gere APENAS sugestoes de presentes fisicos (type='gift').",
